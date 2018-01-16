@@ -16,6 +16,18 @@ app.get(`/`, (req, res) => {
   // });
   res.sendFile(__dirname + '/index.html');
 });
+app.get(`/tsts`, (req, res) => {
+  // connection.query(query, function(err, rows) {
+  //   connection.query(query2, function(err, rows2) {
+  //     res.render('users', {
+  //       title: 'ランキング',
+  //       List: rows,
+  //       Rank: rows2
+  //     });
+  //   });
+  // });
+  res.sendFile(__dirname + '/tsts.html');
+});
 
 io.on('connection', (socket) => {
   console.log('接続成功');
