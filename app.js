@@ -5,32 +5,15 @@ const connection = require('./mysqlConnection');
 const PORT = process.env.PORT || 3000;
 
 app.get(`/`, (req, res) => {
-  // connection.query(query, function(err, rows) {
-  //   connection.query(query2, function(err, rows2) {
-  //     res.render('users', {
-  //       title: 'ランキング',
-  //       List: rows,
-  //       Rank: rows2
-  //     });
-  //   });
-  // });
   res.sendFile(__dirname + '/index.html');
 });
 app.get(`/tsts`, (req, res) => {
-  // connection.query(query, function(err, rows) {
-  //   connection.query(query2, function(err, rows2) {
-  //     res.render('users', {
-  //       title: 'ランキング',
-  //       List: rows,
-  //       Rank: rows2
-  //     });
-  //   });
-  // });
   res.sendFile(__dirname + '/tsts.html');
 });
 
 io.on('connection', (socket) => {
   console.log('接続成功');
+  //socket1(db登録あり)
   socket.on('chat message', (score,name) => {
     //繋がった時に行われる動作
     console.log('score: ' + score);
@@ -42,8 +25,14 @@ io.on('connection', (socket) => {
     });
     io.emit('chat message',score ,name);
   });
+  //socket2(db登録なし)
+  socket.on('chat message2', (score,name) => {
+    //繋がった時に行われる動作
+    console.log('score: ' + score);
+    console.log('name: ' + name);
+    io.emit('chat message2',score ,name);
+  });
 });
 
 http.listen(PORT, () => {
-  console.log(`listening on *:${PORT}`);
 });

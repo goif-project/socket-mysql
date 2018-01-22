@@ -5,9 +5,11 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 45%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      form { padding: 3px; width: 100%; box-sizing: border-box;}
+      .tsts1{ background: #0f0;}
+      .tsts2{ background: #ff0;}
+      form input { border: 0; padding: 10px; width: 45%; margin-right: .5%; box-sizing: border-box;}
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; box-sizing: border-box;}
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
@@ -15,8 +17,15 @@
   </head>
   <body>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="score" placeholder="score" autocomplete="off" /><input id="name" placeholder="name" autocomplete="off" /><button>Send</button>
+    <form class="tsts1" action="">
+      <input id="score1" placeholder="score1" autocomplete="off" />
+      <input id="name1" placeholder="name1" autocomplete="off" />
+      <button>Send</button>
+    </form>
+    <form class="tsts2" action="">
+      <input id="score2" placeholder="score2" autocomplete="off" />
+      <input id="name2" placeholder="name2" autocomplete="off" />
+      <button>Send</button>
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -24,20 +33,41 @@
     <script>
       const socket = io();
       //フォームのボタンを押したら
-      $('form').submit(() => {
+      //socket1
+      $('form.tsts1').submit(() => {
           //app.jsのsocketに情報を送る
-          socket.emit('chat message', $('#score').val(), $('#name').val());
+          socket.emit('chat message', $('#score1').val(), $('#name1').val());
           //inputの内容を初期化
-          $('#score').val('');
-          $('#name').val('');
+          $('#score1').val('');
+          $('#name1').val('');
           return false;
       });
+      //socket2
+      $('form.tsts2').submit(() => {
+          //app.jsのsocketに情報を送る
+          socket.emit('chat message2', $('#score2').val(), $('#name2').val());
+          //inputの内容を初期化
+          $('#score2').val('');
+          $('#name2').val('');
+          return false;
+      });
+      //socket1
       socket.on('chat message', (score,name) => {
           //<li>の要素をhtmlに追加
           $('#messages').append('<li>スコア:'+score+'名前:'+name+'</li>');
-          // $('#messages').append($('<li>').text(name));
           //クラスの付加
-          if($('li:last-child').hasClass("clicked")){ // クリックされた要素がclickedクラスだったら
+          if($('li:last-child').hasClass("clicked")){
+            // $('li').removeClass("clicked");
+          }else{
+            $('li:last-child').addClass("clicked");
+          }
+      });
+      //socket2
+      socket.on('chat message2', (score,name) => {
+          //<li>の要素をhtmlに追加
+          $('#messages').append('<li>スコア2:'+score+'名前2:'+name+'</li>');
+          //クラスの付加
+          if($('li:last-child').hasClass("clicked")){
             // $('li').removeClass("clicked");
           }else{
             $('li:last-child').addClass("clicked");
