@@ -4,10 +4,10 @@
     <title>Socket.IO chat</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 45%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      body { font: 13px Helvetica, Arial; position: relative;}
+      form { background: #000; padding: 3px; position: relative; bottom: 0; width: 100%; }
+      form input { display: block;border: 0; padding: 10px; width: 100%; margin-right: .5%; }
+      form button {display: block;width: 100%; background: rgb(130, 224, 255); border: none; padding: 10px; }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
@@ -15,33 +15,98 @@
   </head>
   <body>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="score" placeholder="score" autocomplete="off" /><input id="name" placeholder="name" autocomplete="off" /><button>Send</button>
+    <form class="name" action="">
+      <input id="name" placeholder="name" autocomplete="off" />
+      <button>Send</button>
+    </form>
+    <form class="score1" action="">
+      <input id="score1" placeholder="score1" autocomplete="off" />
+      <button>Send</button>
+    </form>
+    <form class="score2" action="">
+      <input id="score2" placeholder="score2" autocomplete="off" />
+      <button>Send</button>
+    </form>
+    <form class="score3" action="">
+      <input id="score3" placeholder="score3" autocomplete="off" />
+      <input id="total" placeholder="total" autocomplete="off" />
+      <button>Send</button>
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.js"   integrity="sha256-5i/mQ300M779N2OVDrl16lbohwXNUdzL/R2aVUXyXWA="   crossorigin="anonymous"></script>
     <script>
       const socket = io();
+      var str = "";
       //フォームのボタンを押したら
-      $('form').submit(() => {
+      //form_name
+      $('form.name').submit(() => {
           //app.jsのsocketに情報を送る
-          socket.emit('chat message', $('#score').val(), $('#name').val());
+          socket.emit('post-name', $('#name').val());
           //inputの内容を初期化
-          $('#score').val('');
           $('#name').val('');
           return false;
       });
-      socket.on('chat message', (score,name) => {
+      //form_score1
+      $('form.score1').submit(() => {
+          //app.jsのsocketに情報を送る
+          socket.emit('post-score1', $('#score1').val());
+          //inputの内容を初期化
+          $('#score1').val('');
+          return false;
+      });
+      //form_score2
+      $('form.score2').submit(() => {
+          //app.jsのsocketに情報を送る
+          socket.emit('post-score2', $('#score2').val());
+          //inputの内容を初期化
+          $('#score2').val('');
+          return false;
+      });
+      //form_score3
+      $('form.score3').submit(() => {
+          //app.jsのsocketに情報を送る
+          socket.emit('post-score3', $('#score3').val(), $('#total').val());
+          //inputの内容を初期化
+          $('#score3').val('');
+          $('#total').val('');
+          return false;
+      });
+      //display_name
+      socket.on('post-name', (name) => {
+          str = "";
+          str += '<li>';
+          str += '<span class="name">'+name+'</span>';
+          str += '</li>';
           //<li>の要素をhtmlに追加
-          $('#messages').append('<li>スコア:'+score+'名前:'+name+'</li>');
-          // $('#messages').append($('<li>').text(name));
+          $('#messages').prepend(str);
           //クラスの付加
-          if($('li:last-child').hasClass("clicked")){ // クリックされた要素がclickedクラスだったら
-            // $('li').removeClass("clicked");
-          }else{
-            $('li:last-child').addClass("clicked");
-          }
+          // if($('li:first-child').hasClass("clicked")){
+          // }else{
+          //   $('li:first-child').addClass("clicked");
+          // }
+      });
+      //display_score1
+      socket.on('post-score1', (score1) => {
+          str = "";
+          str += '<span class="first">'+score1+'</span>';
+          //<li>の要素をhtmlに追加
+          $('#messages li:first-child').append(str);
+      });
+      //display_score2
+      socket.on('post-score2', (score2) => {
+          str = "";
+          str += '<span class="second">'+score2+'</span>';
+          //<li>の要素をhtmlに追加
+          $('#messages li:first-child').append(str);
+      });
+      //display_score3
+      socket.on('post-score3', (score3,total) => {
+          str = "";
+          str += '<span class="third">'+score3+'</span>';
+          str += '<span class="total">'+total+'</span>';
+          //<li>の要素をhtmlに追加
+          $('#messages li:first-child').append(str);
       });
     </script>
 

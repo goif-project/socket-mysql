@@ -10,27 +10,36 @@ app.get(`/`, (req, res) => {
 app.get(`/tsts`, (req, res) => {
   res.sendFile(__dirname + '/tsts.html');
 });
-
+console.log('接続');
 io.on('connection', (socket) => {
-  console.log('接続成功');
-  //socket1(db登録あり)
-  socket.on('chat message', (score,name) => {
+  //name登録
+  socket.on('post-name', (name) => {
     //繋がった時に行われる動作
-    console.log('score: ' + score);
     console.log('name: ' + name);
-    var query = 'INSERT INTO total_score (score, user_name) VALUES ("'+ score +'", ' + '"' + name + '")';
+    io.emit('post-name',name);
+  });
+  //score1登録
+  socket.on('post-score1', (score1) => {
+    //繋がった時に行われる動作
+    console.log('score1: ' + score1);
+    io.emit('post-score1',score1);
+  });
+  //score2登録
+  socket.on('post-score2', (score2) => {
+    //繋がった時に行われる動作
+    console.log('score2: ' + score2);
+    io.emit('post-score2',score2);
+  });
+  //score3,total登録、totalをdbに登録
+  socket.on('post-score3', (score3,total) => {
+    //繋がった時に行われる動作
+    console.log('score3: ' + score3);
+    console.log('total: ' + total);
+    var query = 'INSERT INTO total_score (score, user_name) VALUES ("'+ total +'", ' + '"' + score3 + '")';
     connection.query(query, function(err, rows) {
-      // res.redirect('/tsts');
       console.log("登録成功！！");
     });
-    io.emit('chat message',score ,name);
-  });
-  //socket2(db登録なし)
-  socket.on('chat message2', (score,name) => {
-    //繋がった時に行われる動作
-    console.log('score: ' + score);
-    console.log('name: ' + name);
-    io.emit('chat message2',score ,name);
+    io.emit('post-score3',score3 ,total);
   });
 });
 
