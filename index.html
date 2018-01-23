@@ -251,72 +251,52 @@
      <h1><img src="./img/index_title.png" alt="HOME GOLF"></h1>
      <h2>SCORE</h2>
      <ul id="title-wrap">
-       <li><span class="name">Player</span><span class="first">Hole-1</span><span class="second">Hole-2</span><span class="third">Hole-3</span><span class="total">Total</span></li>
+       <li><span class="name">Player</span><span class="total">Total</span></li>
      </ul>
      <ul id="messages">
-       <li class="checked"><span class="name">miwa1</span><span class="first">300</span><span class="second">200</span><span class="third">200</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa2</span><span class="first">200</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa3</span><span class="first">300</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa4</span><span class="first">300</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa5</span><span class="first">300</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa1</span><span class="first">300</span><span class="second">200</span><span class="third">200</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa2</span><span class="first">200</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa3</span><span class="first">300</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa4</span><span class="first">300</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
-       <li class="checked"><span class="name">miwa5</span><span class="first">300</span><span class="second">200</span><span class="third">300</span><span class="total">1000</span></li>
      </ul>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.js"   integrity="sha256-5i/mQ300M779N2OVDrl16lbohwXNUdzL/R2aVUXyXWA="   crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
+      $(function(){
+        $.ajax({
+         type: "POST",
+         url: "http://mayomayooo.sakura.ne.jp/golf_db/select_score_all.php",
+         dataType : "json",
+         cache: "false"
+       }).done(function(data){
+         //  保存成功をアラート表示
+         console.log("あごおお");
+         console.log(data);
+         var num = 0
+         for(var i in data.list){
+             var str = "";
+             str += "<li>";
+             str += "<p class='title under_line_2'>"+data.list[i].user_name+"</p>";
+             str += "<p class='date'>"+data.list[i].score+" 点</p>";
+             str += "</li>";
+             $('#messages').append(str);
+         }
+       }).fail(function(XMLHttpRequest, textStatus, errorThrown){
+         console.log(XMLHttpRequest);
+         console.log(textStatus);
+         console.log(errorThrown);
+       });
+      });
+      //socket.io
       const socket = io();
       //フォームのボタンを押したら
       //display_name
-      socket.on('post-name', (name) => {
-          str = "";
-          str += '<li>';
-          str += '<span class="name">'+name+'</span>';
-          str += '<span class="first">---</span>';
-          str += '<span class="second">---</span>';
-          str += '<span class="third">---</span>';
-          str += '<span class="total">---</span>';
-          str += '</li>';
-          //<li>の要素をhtmlに追加
-          $('#messages').prepend(str);
-          //クラスの付加
-          // if($('li:first-child').hasClass("clicked")){
-          // }else{
-          //   $('li:first-child').addClass("clicked");
-          // }
-      });
-      //display_score1
-      socket.on('post-score1', (score1) => {
-          str = "";
-          str += score1;
-          //<li>の要素をhtmlに追加
-          $('#messages li:first-child .first').text('');
-          $('#messages li:first-child .first').append(str);
-      });
-      //display_score2
-      socket.on('post-score2', (score2) => {
-          str = "";
-          str += score2;
-          //<li>の要素をhtmlに追加
-          $('#messages li:first-child .second').text('');
-          $('#messages li:first-child .second').append(str);
-      });
       //display_score3
       socket.on('post-score3', (score3,total) => {
-          str = "";
-          str += score3;
+          str += '<li>';
+          str += '<span class="name">'+name+'</span>';
+          str += '<span class="total">'+total+'</span>';
+          str += '</li>';
           //<li>の要素をhtmlに追加
-          $('#messages li:first-child .third').text('');
-          $('#messages li:first-child .third').append(str);
-          str = "";
-          str += total;
-          //<li>の要素をhtmlに追加
-          $('#messages li:first-child .total').text('');
           $('#messages li:first-child .total').append(str);
       });
     </script>
